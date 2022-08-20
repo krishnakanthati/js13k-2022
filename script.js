@@ -10,8 +10,10 @@ playerImage.src = "dog.jpg";
 const spriteWidth = 1000 / 6;
 const spriteHeight = 318 / 2;
 
-let frameX = 4;
+let frameX = 0;
 let frameY = 1;
+let gameFrame = 0;
+const staggerFrames = 10;
 
 function animate() {
   ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -28,6 +30,13 @@ function animate() {
     1000,
     318
   );
+  if (gameFrame % staggerFrames == 0) {
+    if (frameX < 6) frameX++;
+    else {
+      frameX = 0;
+    }
+  }
+  gameFrame += 1;
   requestAnimationFrame(animate);
 }
 animate();
