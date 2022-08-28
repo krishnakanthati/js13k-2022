@@ -1,42 +1,92 @@
-const canvas = document.getElementById("canvas1");
-const ctx = canvas.getContext("2d");
+// Set up our canvas
+var canvas = document.createElement("canvas");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+document.body.appendChild(canvas);
+var ctx = canvas.getContext("2d");
 
-const CANVAS_WIDTH = (canvas.width = 1000);
-const CANVAS_HEIGHT = (canvas.height = 318);
+// Pick out the form elements for easy access later
+var x1 = document.querySelector("#x1");
+var x2 = document.querySelector("#x2");
+var y = document.querySelector("#y");
+var color = document.querySelector("#color");
 
-const playerImage = new Image();
-playerImage.src = "dog.jpg";
+// Animation function
+function draw() {
+  // clear the canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-const spriteWidth = 1000 / 6;
-const spriteHeight = 318 / 2;
+  // Wobble the cube using a sine wave
+  var wobble = (Math.sin(Date.now() / 250) * window.innerHeight) / 250;
 
-let frameX = 0;
-let frameY = 1;
-let gameFrame = 0;
-const staggerFrames = 10;
-
-function animate() {
-  ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-  //   ctx.fillRect(100, 50, 100, 100);
-
-  ctx.drawImage(
-    playerImage,
-    frameX * spriteWidth,
-    frameY * spriteHeight,
-    spriteWidth,
-    spriteHeight,
-    0,
-    0,
-    1000,
-    318
+  // draw the cube
+  drawCube(
+    window.innerWidth / 2,
+    window.innerHeight / 2 + wobble + y.value / 2,
+    Number(x1.value),
+    Number(x2.value),
+    Number(y.value),
+    color.value
   );
-  if (gameFrame % staggerFrames == 0) {
-    if (frameX < 6) frameX++;
-    else {
-      frameX = 0;
-    }
-  }
-  gameFrame += 1;
-  requestAnimationFrame(animate);
+
+  requestAnimationFrame(draw);
 }
-animate();
+draw();
+
+// Colour adjustment function
+// Nicked from http://stackoverflow.com/questions/5560248
+function shadeColor(color, percent) {
+  color = color.substr(1);
+  var num = parseInt(color, 16),
+    amt = Math.round(2.55 * percent),
+    R = (num >> 16) + amt,
+    G = ((num >> 8) & 0x00ff) + amt,
+    B = (num & 0x0000ff) + amt;
+  return (
+    "#" +
+    (
+      0x1000000 +
+      (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+      (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+      (B < 255 ? (B < 1 ? 0 : B) : 255)
+    )
+      .toString(16)
+      .slice(1)
+  );
+}
+
+// Draw a cube to the specified specs
+function drawCube(x, y, wx, wy, h, color) {
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x - wx, y - wx * 0.5);
+  ctx.lineTo(x - wx, y - h - wx * 0.5);
+  ctx.lineTo(x, y - h * 1);
+  ctx.closePath();
+  ctx.fillStyle = shadeColor(color, -10);
+  ctx.strokeStyle = color;
+  ctx.stroke();
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + wy, y - wy * 0.5);
+  ctx.lineTo(x + wy, y - h - wy * 0.5);
+  ctx.lineTo(x, y - h * 1);
+  ctx.closePath();
+  ctx.fillStyle = shadeColor(color, 10);
+  ctx.strokeStyle = shadeColor(color, 50);
+  ctx.stroke();
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(x, y - h);
+  ctx.lineTo(x - wx, y - h - wx * 0.5);
+  ctx.lineTo(x - wx + wy, y - h - (wx * 0.5 + wy * 0.5));
+  ctx.lineTo(x + wy, y - h - wy * 0.5);
+  ctx.closePath();
+  ctx.fillStyle = shadeColor(color, 20);
+  ctx.strokeStyle = shadeColor(color, 60);
+  ctx.stroke();
+  ctx.fill();
+}
