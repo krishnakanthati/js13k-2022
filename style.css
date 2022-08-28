@@ -1,5 +1,8 @@
 *{margin:0;padding:0;background:white;}
 body{overflow:hidden;}
+canvas {
+    background-color: lightblue;
+}
 form{
   position:absolute;
   bottom:0;

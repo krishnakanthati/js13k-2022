@@ -22,13 +22,21 @@ function draw() {
   // draw the cube
   drawCube(
     window.innerWidth / 2,
-    window.innerHeight / 2 + wobble + y.value / 2,
+    window.innerHeight / 1.2 + wobble + y.value / 1.2,
     Number(x1.value),
     Number(x2.value),
     Number(y.value),
     color.value
   );
 
+  drawCube(
+    window.innerWidth / 4,
+    window.innerHeight / 1.8 + wobble + y.value / 1.8,
+    Number(x1.value),
+    Number(x2.value),
+    Number(y.value),
+    color.value
+  );
   requestAnimationFrame(draw);
 }
 draw();
